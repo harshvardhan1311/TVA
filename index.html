@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+    />
+    <meta
+      name="description"
+      content="TVA — Thermal Vriksh Architecture digital twin and multi-physics simulation workbench for Project LOKI (DRDO SIH26049)."
+    />
+    <title>TVA · Thermal Vriksh Architecture — Project LOKI Digital Twin</title>
+    <script>
+      // Apply persisted theme before first paint to avoid a flash.
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('tva.theme')
+          var theme =
+            stored ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>TVA requires JavaScript to run the real-time simulation engine.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,598 @@
+/* ============================================================================
+   TVA — FINISH LAYER
+   ----------------------------------------------------------------------------
+   Imported last, on purpose. This file owns the visual "finish" of the whole
+   application: glass, depth, display typography, breathing room.
+
+   It exists as a separate file rather than as edits to components.css because
+   the page-specific CSS underneath is 60 KB of working layout, and this layer
+   only overrides surface treatment. Anything that needs to *move* rather than
+   merely look different still belongs in components.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------- GLASS ----
+   Blur is expensive and it compounds when surfaces nest, so it is applied to
+   the few large surfaces — cards and the app chrome — and not to the dozens of
+   small ones (stat tiles, chips, buttons, pills), which get translucency and a
+   highlight instead. Visually near-identical, dramatically cheaper to paint. */
+
+.card,
+.topbar,
+.nav,
+.statusbar,
+.operator {
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+}
+
+/* Where backdrop-filter is unsupported, fall back to opaque panels rather
+   than leaving text sitting on an unreadable colour mesh. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card,
+  .stat {
+    background: var(--surface-3);
+  }
+
+  .topbar,
+  .nav,
+  .statusbar {
+    background: var(--surface-2);
+  }
+}
+
+/* ---------------------------------------------------------------- CARDS -- */
+
+.card {
+  background: var(--glass-card);
+  border: var(--glass-brd) solid var(--glass-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md), var(--glass-hi);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+/* A hairline of brand light along the top edge. This one line is most of what
+   stops a card reading as a flat rectangle. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 32%, transparent) 24%,
+    color-mix(in srgb, var(--violet) 24%, transparent) 70%,
+    transparent
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 20%, var(--glass-line));
+}
+
+.card--inset {
+  background: var(--surface-inset);
+}
+
+.card--accent {
+  border-color: color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.card--crit {
+  border-color: color-mix(in srgb, var(--crit) 34%, transparent);
+}
+
+.card--warn {
+  border-color: color-mix(in srgb, var(--warn) 34%, transparent);
+}
+
+.card__head {
+  border-bottom: var(--glass-brd) solid var(--glass-line);
+}
+
+.card__title {
+  font-family: var(--font-display);
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
+
+/* --------------------------------------------------------------- CHROME -- */
+
+.topbar,
+.nav,
+.statusbar {
+  background: var(--glass-chrome);
+  border-color: var(--glass-line);
+}
+
+.topbar {
+  box-shadow: var(--shadow-md), var(--glass-hi);
+}
+
+.nav {
+  box-shadow: 1px 0 28px -14px rgba(0, 0, 0, 0.65);
+}
+
+.statusbar {
+  box-shadow: 0 -10px 28px -18px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------------------------------------------------------------- BRAND -- */
+
+.brand__mark {
+  border-radius: var(--r-sm);
+  filter: drop-shadow(0 5px 14px color-mix(in srgb, var(--accent) 32%, transparent));
+  transition: transform var(--dur) var(--ease-out), filter var(--dur) var(--ease);
+}
+
+.topbar__brand:hover .brand__mark {
+  transform: translateY(-1px) scale(1.05);
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.brand__sub {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* ----------------------------------------------------------- TOP BAR UI -- */
+
+.readout {
+  border-color: var(--glass-line);
+  border-radius: var(--r-pill);
+  background: var(--surface-inset);
+}
+
+.topbar__nav-toggle {
+  border-radius: var(--r-sm);
+  border-color: transparent;
+  background: var(--surface-3);
+}
+
+.topbar__nav-toggle:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* --------------------------------------------------------------- BUTTONS -- */
+
+.btn {
+  border-radius: var(--r-pill);
+  border-color: var(--glass-line);
+  background: var(--surface-3);
+  box-shadow: var(--glass-hi);
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--violet) 52%, var(--accent))
+  );
+  border-color: transparent;
+  box-shadow: 0 7px 20px -9px color-mix(in srgb, var(--accent) 72%, transparent),
+    var(--glass-hi-strong);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--violet) 52%, var(--accent))
+  );
+  filter: brightness(1.08);
+}
+
+.btn--active {
+  box-shadow: 0 0 0 1px var(--accent-line), 0 7px 20px -10px var(--accent);
+}
+
+/* ------------------------------------------------------------------ NAV -- */
+
+.nav__item:hover {
+  transform: translateX(2px);
+}
+
+.nav__item[aria-current='page'] {
+  background: linear-gradient(90deg, var(--accent-soft), transparent 92%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* Same affordance as the old 2px tick, drawn as a soft gradient glow. */
+.nav__item[aria-current='page']::before {
+  left: 0;
+  width: 3px;
+  height: 58%;
+  background: linear-gradient(180deg, var(--accent), var(--violet));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.nav__group-label {
+  opacity: 0.75;
+}
+
+.nav__badge {
+  border-radius: var(--r-pill);
+  padding: 1px 7px;
+}
+
+/* ----------------------------------------------------------------- PAGE -- */
+
+.page__head {
+  border-bottom: var(--glass-brd) solid var(--glass-line);
+}
+
+.page__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  background: linear-gradient(94deg, var(--text) 34%, color-mix(in srgb, var(--accent) 58%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* -------------------------------------------------------------- SPACING --
+   The original vertical rhythm was tight enough that a page of twelve cards
+   read as one clump. Opening the gaps does more for "professional" than any
+   amount of decoration. */
+.stack {
+  gap: var(--s-5);
+}
+
+.grid {
+  gap: var(--s-4);
+}
+
+.card__body {
+  padding: var(--s-5);
+}
+
+.card__head {
+  min-height: 40px;
+}
+
+/* ----------------------------------------------------------- STAT TILES -- */
+
+.stat {
+  background: var(--glass-card);
+  border: var(--glass-brd) solid var(--glass-line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm), var(--glass-hi);
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease);
+}
+
+.stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), var(--glass-hi);
+}
+
+.stat__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+}
+
+/* ------------------------------------------------------------ CHIPS/TAGS -- */
+
+.badge,
+.chip {
+  border-radius: var(--r-pill);
+  box-shadow: var(--glass-hi);
+}
+
+/* ---------------------------------------------------------------- ALERTS -- */
+
+.alert {
+  border-radius: var(--r-md);
+}
+
+/* -------------------------------------------------------------- VIEWPORT -- */
+
+.viewport-frame,
+.viewport {
+  border-radius: var(--r-md);
+}
+/* ###########################################################################
+   DIGITAL TWIN — viewport finish
+   ######################################################################### */
+
+.viewport-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--surface-inset);
+  box-shadow: inset 0 0 90px -30px rgba(0, 0, 0, 0.85);
+}
+
+.viewport {
+  border-color: transparent;
+  border-radius: var(--r-md);
+  min-height: 300px;
+  background: transparent;
+}
+
+/* Corner brackets are drawn as a frame, so round them off too. */
+.viewport__brackets span {
+  border-radius: 3px;
+  opacity: 0.5;
+}
+
+.viewport__hud {
+  background: color-mix(in srgb, var(--bg-deep) 72%, transparent);
+  border: 1px solid var(--glass-line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-md), var(--glass-hi);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+
+/* --------------------------------------------------------- FIELD LEGEND -- */
+.vp-legend {
+  position: absolute;
+  z-index: 4;
+  left: var(--s-3);
+  bottom: var(--s-3);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 5px var(--s-2) 5px var(--s-3);
+  background: color-mix(in srgb, var(--bg-deep) 72%, transparent);
+  border: 1px solid var(--glass-line);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-md), var(--glass-hi);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.vp-legend__k {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+
+.vp-legend__ramp {
+  width: 108px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(
+    90deg,
+    var(--field-cold),
+    var(--field-cool),
+    var(--field-mid),
+    var(--field-warm),
+    var(--field-hot)
+  );
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.vp-legend__ends {
+  display: flex;
+  gap: var(--s-2);
+  font-size: 9.5px;
+  color: var(--text-3);
+}
+
+.vp-legend__ends b {
+  color: var(--text-2);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------- PULSE ----- */
+/* Used on the die and the battery bay when they need operator attention. */
+.pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: node-pulse 2.1s var(--ease-out) infinite;
+}
+
+@keyframes node-pulse {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.94);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+/* The bottom-left HUD sits next to the legend on wide screens. */
+@media (max-width: 900px) {
+  .vp-legend {
+    display: none;
+  }
+}
+
+/* ###########################################################################
+   PRESENTER STAGE
+   A slide has to read from the back of a room, so this is a different scale
+   system from the rest of the app: display type, generous margins, one
+   progress bar, and nothing that a panel would mistake for an application.
+   ######################################################################### */
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-height: calc(100vh - var(--topbar-h) - var(--statusbar-h) - var(--s-10) - 92px);
+  padding: var(--s-6) var(--s-8) var(--s-5);
+  border-radius: var(--r-xl);
+  border: var(--glass-brd) solid var(--glass-line);
+  background: var(--mesh), var(--glass-card);
+  box-shadow: var(--shadow-lg), var(--glass-hi-strong);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  overflow: hidden;
+}
+
+.stage__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.stage__bar-l {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.stage__bar-r {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  font-weight: 700;
+}
+
+.stage__close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  border: var(--glass-brd) solid var(--glass-line);
+  color: var(--text-2);
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.stage__close:hover {
+  color: var(--crit);
+  border-color: color-mix(in srgb, var(--crit) 40%, transparent);
+}
+
+.stage__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--surface-inset);
+}
+
+.stage__progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--violet));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.stage__slide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: rise var(--dur-slow) var(--ease-out) both;
+}
+
+.stage__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.4vw, 3.1rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  max-width: 22ch;
+  background: linear-gradient(96deg, var(--text) 30%, color-mix(in srgb, var(--accent) 66%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stage__slide .deck__claim {
+  font-size: var(--fs-lg);
+  line-height: 1.5;
+  max-width: 74ch;
+  padding: var(--s-4) var(--s-5);
+  border-radius: var(--r-md);
+  background: linear-gradient(100deg, var(--accent-soft), transparent 70%);
+  border-left: 3px solid var(--accent);
+}
+
+.stage__slide .stat__value {
+  font-size: 2rem;
+}
+
+.stage__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  padding-top: var(--s-4);
+  border-top: var(--glass-brd) solid var(--glass-line);
+}
+
+@media (max-width: 780px) {
+  .stage {
+    padding: var(--s-4);
+  }
+
+  .stage__foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ------------------------------------------------- DECK, NOT PRESENTING -- */
+.deck__claim {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  font-weight: 600;
+  padding: var(--s-4) var(--s-5);
+  border-radius: var(--r-md);
+  background: linear-gradient(100deg, var(--accent-soft), transparent 74%);
+  border-left: 3px solid var(--accent);
+}
+
+.deck__body {
+  min-height: 200px;
+}
+
+.deck__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  padding-top: var(--s-3);
+  border-top: var(--glass-brd) solid var(--glass-line);
+}
+
+.deckdot {
+  border-radius: var(--r-sm);
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.deckdot:hover {
+  transform: translateY(-1px);
+}
+
+.deckdot.is-on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-line), 0 8px 22px -12px var(--accent);
+}
